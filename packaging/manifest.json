@@ -1,0 +1,82 @@
+{
+  "manifest_version": "0.3",
+  "name": "exchange-mcp",
+  "display_name": "Exchange (on-premises)",
+  "version": "0.0.0",
+  "description": "Read and search mail, calendar and the company directory of an on-premises Exchange server, directly over EWS.",
+  "long_description": "Runs on your computer and talks straight to your own Exchange Server 2016 / 2019 / SE over EWS, with no relay service in between. Mail search, full emails and attachments, drafts and reply drafts, calendar, colleagues' free/busy and directory lookup. Sending stays off unless you turn it on.",
+  "author": {
+    "name": "Keivan Sohrabloo"
+  },
+  "server": {
+    "type": "binary",
+    "entry_point": "server/exchange-mcp",
+    "mcp_config": {
+      "command": "${__dirname}/server/exchange-mcp",
+      "args": ["serve"],
+      "env": {
+        "EXCHANGE_EMAIL": "${user_config.email}",
+        "EXCHANGE_USERNAME": "${user_config.username}",
+        "EXCHANGE_PASSWORD": "${user_config.password}",
+        "EXCHANGE_EWS_URL": "${user_config.ews_url}",
+        "EXCHANGE_ALLOW_SEND": "${user_config.allow_send}"
+      }
+    }
+  },
+  "user_config": {
+    "email": {
+      "type": "string",
+      "title": "Email address",
+      "description": "Your mailbox address, e.g. you@company.com",
+      "required": true
+    },
+    "ews_url": {
+      "type": "string",
+      "title": "EWS address",
+      "description": "Your OWA address with /EWS/Exchange.asmx instead of /owa, e.g. https://mail.company.com/EWS/Exchange.asmx",
+      "required": true
+    },
+    "username": {
+      "type": "string",
+      "title": "Username (optional)",
+      "description": "Only if login fails with the email address: DOMAIN\\user",
+      "required": false,
+      "default": ""
+    },
+    "password": {
+      "type": "string",
+      "title": "Password",
+      "description": "Your Exchange/Windows password. Stored by Claude Desktop in the system's secure storage.",
+      "sensitive": true,
+      "required": true
+    },
+    "allow_send": {
+      "type": "boolean",
+      "title": "Allow sending",
+      "description": "Lets Claude send email and meeting invitations. When off, it can only save drafts.",
+      "required": false,
+      "default": false
+    }
+  },
+  "tools": [
+    { "name": "mailbox_info", "description": "Connection check and inbox counts" },
+    { "name": "list_folders", "description": "Mail folders with unread/total counts" },
+    { "name": "search_emails", "description": "Search mail, newest first" },
+    { "name": "get_email", "description": "Read one email in full" },
+    { "name": "save_attachment", "description": "Save an attachment to Downloads/exchange-mcp" },
+    { "name": "mark_as_read", "description": "Mark emails read or unread" },
+    { "name": "create_draft", "description": "Save a new email in Drafts" },
+    { "name": "create_reply_draft", "description": "Save a reply in Drafts" },
+    { "name": "list_events", "description": "Calendar events in a date range" },
+    { "name": "get_event", "description": "One event with attendees and agenda" },
+    { "name": "get_availability", "description": "Colleagues' free/busy and common free slots" },
+    { "name": "find_people", "description": "Company directory lookup" },
+    { "name": "create_event", "description": "Add a calendar entry or meeting" },
+    { "name": "send_email", "description": "Send an email (only when sending is allowed)" },
+    { "name": "send_draft", "description": "Send a saved draft (only when sending is allowed)" }
+  ],
+  "keywords": ["exchange", "ews", "outlook", "email", "calendar", "on-premises"],
+  "compatibility": {
+    "platforms": ["darwin", "win32"]
+  }
+}

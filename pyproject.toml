@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "exchange-mcp"
+version = "0.1.0"
+description = "Local MCP server that connects Claude Desktop / Claude Code straight to an on-premises Exchange server over EWS. No third-party relay."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=2.2,<3",
+    "exchangelib>=5.6,<6",
+    "keyring>=25",
+    "truststore>=0.10",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+build = ["pyinstaller>=6.10"]
+
+[project.scripts]
+exchange-mcp = "exchange_mcp.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/exchange_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
