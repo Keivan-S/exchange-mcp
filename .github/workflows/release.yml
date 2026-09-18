@@ -17,7 +17,9 @@ jobs:
         include:
           - { os: windows-latest, target: windows-x64 }
           - { os: macos-14, target: macos-arm64 }
-          - { os: macos-15-intel, target: macos-x64 }
+          # cryptography 49+ ships no Intel-macOS wheel; a source build links Homebrew's OpenSSL and the bundled
+          # binary then crashes against Python's own libssl. 48.x still has a universal2 wheel.
+          - { os: macos-15-intel, target: macos-x64, pin: "cryptography<49" }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
@@ -26,7 +28,11 @@ jobs:
           python-version: "3.13"
 
       - name: Install
-        run: python -m pip install -e ".[dev,build]"
+        shell: bash
+        env:
+          PIP_ONLY_BINARY: cryptography  # never compile it: a local build can't be bundled safely
+          PIN: ${{ matrix.pin }}
+        run: python -m pip install -e ".[dev,build]" ${PIN:+"$PIN"}
 
       - name: Tag matches package version
         if: startsWith(github.ref, 'refs/tags/v')
